@@ -59,8 +59,6 @@ Items must follow the structure:
 
 Check out included index.html
 
-```
-
 ---
 
 # Form Integration
