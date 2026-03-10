@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>onlydropdown Component Test</title>
+    
+    <script src="only-dropdown.js" defer></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px;
+        }
+        .demo-section {
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+        }
+        .event-log {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<form method="get" action="">
+
+<div class="container">
+    
+
+        <div class="demo-section">
+            <label><b>1. Pick-only Mode</b> (Filterable + Clearable)</label>
+            <br><br>
+            <only-dropdown 
+                id="dropdown-pick"
+                mode="pick"
+                name="dd1" 
+                placeholder="Select this <"
+                filterPlaceholder="Filter this <"
+                filterable 
+                clearable
+                class="custom-style"
+                data-logger-id="logger-pick"
+                data-items='[
+                    {"value": "apple", "display": "Apple apple apple apple apple apple apple apple apple apple apple"},
+                    {"value": "banana", "display": "Banana"},
+                    {"value": "cherry", "display": "Cherry"},
+                    {"value": "date", "display": "Date"}
+                ]'
+                >
+            </only-dropdown>
+            <div class="event-log" id="logger-pick">...</div>
+        </div>
+
+
+        <div class="demo-section">
+            <label><b>2. Type Mode</b></label>
+            <br><br>
+            <only-dropdown 
+                id="dropdown-type2"
+                mode="type"
+                name="dd2" 
+                data-logger-id="logger-type"
+                >
+            </only-dropdown>
+            <div class="event-log" id="logger-type">...</div>
+        </div>
+    
+
+
+        <div class="demo-section">
+            <label><b>3. Type Mode</b> (Filterable, Clearable)</label>
+            <br><br>
+            <only-dropdown 
+                id="dropdown-type3"
+                mode="type"
+                name="dd3" 
+                filterable
+                clearable
+                data-logger-id="logger-type3"
+                data-items='[
+                    {"value": "apple", "display": "Apple apple apple apple apple apple apple apple apple apple apple"},
+                    {"value": "banana", "display": "Banana"},
+                    {"value": "cherry", "display": "Cherry"},
+                    {"value": "date", "display": "Date"}
+                ]'
+                >
+            </only-dropdown>
+            <div class="event-log" id="logger-type3">...</div>
+            <br>
+            <input type="button" value="set value" id="setterOf3rd">
+        </div>
+
+
+        <div class="demo-section">
+            <label><b>4. Type Mode</b> customized</label>
+            <br><br>
+            <only-dropdown 
+                id="dropdown-type4"
+                mode="type"
+                name="dd4" 
+                filterable
+                clearable
+                data-logger-id="logger-type4"
+                data-items='[
+                    {"value": "apple", "display": "Apple apple apple apple apple apple apple apple apple apple apple"},
+                    {"value": "banana", "display": "Banana"},
+                    {"value": "cherry", "display": "Cherry"},
+                    {"value": "date", "display": "Date"}
+                ]'
+                dropdownWindowCss = "outline: 3px solid green;"
+                itemCss = "color: magenta;"
+                selectedItemCss = "background-color: brown"
+                filterInputCss = "background: linear-gradient(90deg,rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%);"
+                filterWrapperCss = "background-color: yellow" 
+                inputCss = "color: white; background-color: black; border-radius: 7px;"   
+                style="width: 300px; background-color: black; border-radius: 7px;"            
+                >
+            </only-dropdown>
+            <div class="event-log" id="logger-type4">...</div>
+        </div>
+
+        <div class="demo-section">
+            <label><b>5. Pick-only Mode</b> (no clear)</label>
+            <br><br>
+            <only-dropdown 
+                id="dropdown-pick-5"
+                mode="pick"
+                name="dd1" 
+                placeholder="Select this <"
+                filterPlaceholder="Filter this <"
+                class="custom-style"
+                data-logger-id="logger-pick2"
+                data-items='[
+                    {"value": "apple", "display": "Apple apple apple apple apple apple apple apple apple apple apple"},
+                    {"value": "banana", "display": "Banana"},
+                    {"value": "cherry", "display": "Cherry"},
+                    {"value": "date", "display": "Date"}
+                ]'
+                >
+            </only-dropdown>
+            <div class="event-log" id="logger-pick2">...</div>
+            <br>
+            <input type="button" value="set value" id="setterOf5th">
+
+        </div>
+
+    
+
+</div>
+
+<input type="submit" value="submit form">
+
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // add event listener on all dropdowns
+        const dropdowns = document.querySelectorAll('[data-logger-id]');
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('change', (e) => {
+                const loggerId = e.target.getAttribute('data-logger-id');
+                logger = document.getElementById(loggerId);
+                logger.innerHTML = `<b>onchange triggered!</b> Selected Value: <code>${e.detail.value}</code> (Display: ${e.detail.display})`;
+            });
+            dropdown.addEventListener('clear', (e) => {
+                const loggerId = e.target.getAttribute('data-logger-id');
+                logger = document.getElementById(loggerId);
+                logger.innerHTML = `<b>onclear triggered!</b> Value emptied.`;
+            });
+        });
+
+
+        // fill dropdown items manually
+        const dropdownType = document.getElementById('dropdown-type2');
+        dropdownType.items = [
+            { value: "Spaing long long long long long long long long long name Spain", display: "Spaing long long long long long long long long long name Spain" },
+            { value: "United Kingdom", display: "United Kingdom" },
+            { value: "Canada", display: "Canada" },
+            { value: "Australia", display: "Australia" },
+            { value: "Germany", display: "Germany" },
+            { value: "France", display: "France" },
+            { value: "Japan", display: "Japan" }
+        ];
+
+   
+    });
+
+    document.getElementById("setterOf3rd").addEventListener('click', (e) => {
+        let dropdown = document.getElementById("dropdown-type3");
+        dropdown.value = "wwwq";
+    });
+
+    document.getElementById("setterOf5th").addEventListener('click', (e) => {
+        let dropdown = document.getElementById("dropdown-pick-5");
+        dropdown.value = "banana";
+    });
+
+</script>
+
+</body>
+</html>
