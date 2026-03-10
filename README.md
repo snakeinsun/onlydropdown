@@ -55,6 +55,14 @@ Items must follow the structure:
 
 ---
 
+# Usage Example
+
+Check out included index.html
+
+```
+
+---
+
 # Form Integration
 
 The component is **form-associated**, so it works inside a form like a native input.
