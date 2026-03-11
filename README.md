@@ -61,6 +61,12 @@ Check out included index.html
 
 ---
 
+# Demo Page
+
+https://snakeinsun.github.io/onlydropdown/
+
+---
+
 # Form Integration
 
 The component is **form-associated**, so it works inside a form like a native input.
