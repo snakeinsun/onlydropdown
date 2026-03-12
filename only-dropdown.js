@@ -1,17 +1,3 @@
-function calculateDropdownRect(triggerRect, dropdownHeight, windowHeight) {
-    let top = triggerRect.bottom;
-    
-    if (triggerRect.bottom + dropdownHeight > windowHeight && triggerRect.top > dropdownHeight) {
-        top = triggerRect.top - dropdownHeight;
-    }
-
-    return {
-        top: top,
-        left: triggerRect.left,
-        width: triggerRect.width
-    };
-}
-
 class OnlyDropdown extends HTMLElement {
 
     static formAssociated = true;
@@ -154,9 +140,8 @@ class OnlyDropdown extends HTMLElement {
                     background: #fff;
                     border: 1px solid #ccc;
                     border-radius: 4px;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.8);
                     z-index: 9999;
-                    max-height: 250px;
                     flex-direction: column;
                     ${this.css.dropdownWindow}
                 }
@@ -365,6 +350,9 @@ class OnlyDropdown extends HTMLElement {
         
         if (this.mode === 'pick') this.updateList('');
 
+        const triggerRect = this.triggerWrapper.getBoundingClientRect();
+        this.dropdownWindow.style.width = `${triggerRect.width}px`;
+
         this.dropdownWindow.classList.add('show');
         this.positionDropdown();
     }
@@ -378,14 +366,19 @@ class OnlyDropdown extends HTMLElement {
 
     positionDropdown() {
         const triggerRect = this.triggerWrapper.getBoundingClientRect();
-        const dropdownHeight = this.dropdownWindow.offsetHeight || 200; // fallback height
+        const dropdownHeight = this.dropdownWindow.offsetHeight || 200; 
         const windowHeight = window.innerHeight;
 
-        const rect = calculateDropdownRect(triggerRect, dropdownHeight, windowHeight);
+        const rect = this.calculateDropdownRect(triggerRect, dropdownHeight, windowHeight);
 
         this.dropdownWindow.style.top = `${rect.top}px`;
         this.dropdownWindow.style.left = `${rect.left}px`;
         this.dropdownWindow.style.width = `${rect.width}px`;
+        this.dropdownWindow.style.maxHeight = `${rect.maxHeight}px`;
+        if (rect.position == "above"){
+            // fix dropdown window height if it's above
+            this.dropdownWindow.style.height = `${dropdownHeight}px`;
+        }
     }
 
     handleKeydown(e, extras) {
@@ -435,6 +428,45 @@ class OnlyDropdown extends HTMLElement {
         if (highlightedEl) {
             highlightedEl.scrollIntoView({ block: 'nearest' });
         }
+    }
+
+    calculateDropdownRect(triggerRect, dropdownHeight, windowHeight) {
+        const spaceBelow = windowHeight - triggerRect.bottom;
+        const spaceAbove = triggerRect.top;
+        const spaceThreshold = windowHeight * (1/3);
+        let top;
+        let maxHeight;
+        let position;
+
+        if (spaceBelow >= spaceThreshold) {
+            top = triggerRect.bottom;
+            maxHeight = spaceBelow;
+            position = 'below';
+        } 
+        else if (spaceAbove >= spaceThreshold) {
+            top = triggerRect.top - dropdownHeight;
+            maxHeight = spaceAbove;
+            position = 'above';
+        } 
+        else {
+            if (spaceBelow > spaceAbove) {
+                top = triggerRect.bottom;
+                maxHeight = spaceBelow;
+                position = 'below';
+            } else {
+                top = 0; 
+                maxHeight = spaceAbove;
+                position = 'above';
+            }
+        }
+
+        return {
+            top: top,
+            left: triggerRect.left,
+            width: triggerRect.width,
+            maxHeight: maxHeight,
+            position: position
+        };
     }
 }
 
