@@ -47,7 +47,6 @@
                 filterPlaceholder="Filter this <"
                 filterable 
                 clearable
-                class="custom-style"
                 data-logger-id="logger-pick"
                 data-items='[
                     {"value": "apple", "display": "Apple apple apple apple apple apple apple apple apple apple apple"},
@@ -137,7 +136,6 @@
                 name="dd1" 
                 placeholder="Select this <"
                 filterPlaceholder="Filter this <"
-                class="custom-style"
                 data-logger-id="logger-pick2"
                 data-items='[
                     {"value": "apple", "display": "Apple apple apple apple apple apple apple apple apple apple apple"},
@@ -150,8 +148,31 @@
             <div class="event-log" id="logger-pick2">...</div>
             <br>
             <input type="button" value="set value" id="setterOf5th">
+        </div>
+
+        <div class="demo-section">
+            <label><b>6. Pick-only Mode</b> (set value in HTML)</label>
+            <br><br>
+            <only-dropdown 
+                id="dropdown-pick-6"
+                mode="pick"
+                name="dd6" 
+                placeholder="Select this <"
+                filterPlaceholder="Filter this <"
+                data-logger-id="logger-pick2"
+                value="apple"
+                data-items='[
+                    {"value": "apple", "display": "Apple apple apple apple apple apple apple apple apple apple apple"},
+                    {"value": "banana", "display": "Banana"},
+                    {"value": "cherry", "display": "Cherry"},
+                    {"value": "date", "display": "Date"}
+                ]'
+                >
+            </only-dropdown>
+            <div class="event-log" id="logger-pick3">...</div>
 
         </div>
+
 
     
 

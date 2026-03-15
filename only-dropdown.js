@@ -12,6 +12,9 @@ class OnlyDropdown extends HTMLElement {
         this._selectedValue = null;
         this._internals.setFormValue(this._selectedValue);
 
+        // keeps a value until element is loaded
+        this._pendingValue = null;
+
         this._highlightedIndex = -1;
         this._isOpen = false;
         
@@ -37,6 +40,10 @@ class OnlyDropdown extends HTMLElement {
         this.bindEvents();
     }
 
+    static get observedAttributes() {
+        return ['value'];
+    }
+
     connectedCallback() {
         const itemsAttr = this.getAttribute('data-items');
         if (itemsAttr) {
@@ -52,6 +59,17 @@ class OnlyDropdown extends HTMLElement {
     set items(value) {
         this._items = Array.isArray(value) ? value : [];
         this.updateList();
+
+        if (this._pendingValue) {
+            this.value = this._pendingValue;
+            this._pendingValue = null;
+        }
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'value' && oldValue !== newValue) {
+            this.value = newValue;
+        }
     }
 
     get items() {
@@ -60,24 +78,28 @@ class OnlyDropdown extends HTMLElement {
 
     set value(val) {
 
+        if (!this.items.length) {
+            this._pendingValue = val;
+            return;
+        }
+
         if (!val){
             this.selectItem({value: null, display: null});
             return;
         }
 
-
         let strVal = JSON.stringify(val);
-        let itemFound = this.items.find(i=>i.value == val || i == val || JSON.stringify(i) == strVal);
-        
+        let itemFound = this.items.find(i => i.value == val || i == val || JSON.stringify(i) == strVal);
+
         if (this.mode === 'pick' && itemFound){
             this.selectItem(itemFound);
         }
 
         if (this.mode === 'type') {
-             if (itemFound)
+            if (itemFound)
                 this.selectItem(itemFound);
             else
-                this.selectItem({item: val, display: val});
+                this.selectItem({value: val, display: val});
         }
     }
 
@@ -323,6 +345,12 @@ class OnlyDropdown extends HTMLElement {
 
     selectItem(item) {
         this._selectedValue = item.value;
+
+        if (item.value !== null)
+            this.setAttribute('value', item.value);
+        else
+            this.removeAttribute('value');
+
         this._internals.setFormValue(this._selectedValue);
 
         this.mainInput.value = item.display;
